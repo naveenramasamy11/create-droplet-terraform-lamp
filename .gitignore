@@ -1,3 +1,4 @@
 droplet.tfvars
 slack.yml
 Dockerfile_not_ready
+.terraform
