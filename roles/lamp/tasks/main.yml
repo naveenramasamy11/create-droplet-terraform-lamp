@@ -1,0 +1,62 @@
+---
+- name: Install the necessary sofwares for lamp
+  package:
+    name: "{{ item }}"
+    state: installed
+  with_items:
+  - "{{ packages }}"
+  notify: start services
+
+- service: name=mariadb state=started enabled=yes
+
+- name: Upgrade pexpect
+  pip:
+    name: pexpect>3
+
+- name: Copy the default index file
+  copy: 
+    src:  "{{ item }}"
+    dest: "{{ http_path }}" 
+  with_items:
+  - "{{ necc_files }}"
+
+- name: Create .my.cnf
+  file: path=/root/.my.cnf state=touch
+
+- name: Configure MariaDB
+  expect:
+    command: "mysql_secure_installation"
+    responses:
+     (?i)current: ""
+     (?i)set: "y"
+     (?i)new: "{{ server_passwd }}"
+     (?i)re-enter: "{{ server_passwd }}"
+     (?i)anonymous: "y"
+     (?i)remotely: "n"
+     (?i)test: "y"
+     (?i)tables: "y"
+
+- name: Open the services in Firewall
+  firewalld:
+    service: "{{ item }}"
+    permanent: yes
+    state: enabled
+  with_items:
+  - "{{ firewall_whitelist }}"
+
+- name: Open the ports in Firewall.
+  firewalld:
+    port: "{{ item }}/tcp"
+    permanent: yes
+    state: enabled
+  with_items:
+  - "{{ ports }}"
+
+- name: Creating the .my.cnf
+  blockinfile:
+    path: /root/.my.cnf
+    block: |
+       [client]
+       user=root 
+       password="{{ server_passwd }}" 
+       

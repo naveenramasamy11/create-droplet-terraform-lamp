@@ -1,0 +1,29 @@
+---
+# vars file for lamp
+packages:
+-  python-pip
+-  pexpect
+-  httpd
+-  mariadb-server
+-  mariadb
+-  php
+-  php-mysql
+-  php-pdo 
+-  php-gd 
+-  php-mbstring
+
+firewall_whitelist:
+- http
+- https
+- mysql
+
+ports:
+- 3306
+- 80
+- 443
+
+necc_files:
+- index.html
+- info.php
+
+http_path: /var/www/html/
