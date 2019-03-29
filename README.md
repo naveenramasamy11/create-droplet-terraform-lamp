@@ -9,6 +9,4 @@
  
  _$ terraform plan -var-file=droplet.tfvars_ 
  
- * You may now begin working with Terraform. Try running the above command to see
-any changes that are required for your infrastructure. All Terraform commands
-should now work.
+ * You may now begin working with Terraform. Create a `tfvar` file of necessary variables and run the above command to see any changes that are required for your infrastructure. All Terraform commands should now work.
