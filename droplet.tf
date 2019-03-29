@@ -28,21 +28,22 @@ provisioner "file" {
     destination = "/root/"
 }
 
-provisoner "file" {
+provisioner "file" {
     source = "roles"
     destination = "/root"
 }
 
-provisoner "file" {
+provisioner "file" {
     source = "slack.yml"
     destination = "/root"
 }
 provisioner "remote-exec" {
     inline = [
-      "yum install -y ansible epel-release",
-      "ansible-playbook /root/slack.yml --tags='provision'"
+      "yum install -y epel-release",
+      "yum install -y ansible",
+      "ansible-playbook /root/slack.yml --tags='provision'",
       "ansible-playbook /root/provisonal.yml",
-      "ansible-playbook /root/slack.yml --tags='lamp'",
+      "ansible-playbook /root/slack.yml --tags='lamp'"
     ]
   }
 }
