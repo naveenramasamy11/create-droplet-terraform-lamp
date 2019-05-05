@@ -43,7 +43,8 @@ provisioner "remote-exec" {
       "yum install -y ansible",
       "ansible-playbook /root/slack.yml --tags='provision'",
       "ansible-playbook /root/provisonal.yml",
-      "ansible-playbook /root/slack.yml --tags='lamp'"
+      "ansible-playbook /root/slack.yml --tags='lamp'",
+      "yum remove -y ansible"
     ]
   }
 }

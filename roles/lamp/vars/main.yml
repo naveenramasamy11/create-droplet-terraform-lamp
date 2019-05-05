@@ -1,11 +1,11 @@
 ---
 # vars file for lamp
 packages:
+-  epel-release
 -  python-pip
 -  pexpect
 -  httpd
--  mariadb-server
--  mariadb
+-  http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm
 -  php
 -  php-mysql
 -  php-pdo 
