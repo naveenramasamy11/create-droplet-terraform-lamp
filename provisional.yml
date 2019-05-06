@@ -1,0 +1,9 @@
+---
+- name: Apply the Roles as per the requirement
+  hosts: localhost
+  gather_facts: no
+  vars_files:
+  - ./roles/lamp/vars/main.yml
+  roles:
+  - lamp
+
