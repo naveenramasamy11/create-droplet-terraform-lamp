@@ -25,7 +25,17 @@ resource "digitalocean_droplet" "lamp" {
 
 provisioner "file" {
     source = "provisional.yml"
-    destination = "/root/"
+    destination = "/root/provisional.yml"
+}
+
+provisioner "file" {
+    source = "inventory"
+    destination = "/root/inventory"
+}
+
+provisioner "file" {
+    source = "ansible.cfg"
+    destination = "/root/ansible.cfg"
 }
 
 provisioner "file" {
@@ -35,16 +45,17 @@ provisioner "file" {
 
 provisioner "file" {
     source = "slack.yml"
-    destination = "/root"
+    destination = "/root/slack.yml"
 }
 provisioner "remote-exec" {
     inline = [
       "yum install -y epel-release",
       "yum install -y ansible",
+      "ansible-playbook /root/provisional.yml",
       "ansible-playbook /root/slack.yml --tags='provision'",
-      "ansible-playbook /root/provisonal.yml",
       "ansible-playbook /root/slack.yml --tags='lamp'",
-      "yum remove -y ansible"
+      "yum remove -y ansible",
+      "rm -rf /root/{*.yml,roles,*.ansible.*,inventory}"
     ]
   }
 }
