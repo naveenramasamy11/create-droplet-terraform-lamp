@@ -6,12 +6,17 @@ packages:
 -  pexpect
 -  httpd
 -  http://repo.mysql.com/mysql-community-release-el7-5.noarch.rpm
--  php
--  php-mysql
--  php-pdo 
--  php-gd 
--  php-mbstring
-
+-  http://rpms.remirepo.net/enterprise/remi-release-7.rpm
+-  mysql-server
+-  php72
+-  php72-php-fpm 
+-  php72-php-mysqlnd
+-  php72-php-opcache
+-  php72-php-xml 
+-  php72-php-xmlrpc 
+-  php72-php-gd
+-  php72-php-mbstring
+-  php72-php-json
 firewall_whitelist:
 - http
 - https

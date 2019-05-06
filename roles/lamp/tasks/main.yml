@@ -1,4 +1,9 @@
 ---
+- name: upgrade all packages
+  yum:
+    name: '*'
+    state: latest
+
 - name: Install the necessary sofwares for lamp
   package:
     name: "{{ item }}"
@@ -6,8 +11,6 @@
   with_items:
   - "{{ packages }}"
   notify: start services
-
-- service: name=mariadb state=started enabled=yes
 
 - name: Upgrade pexpect
   pip:
@@ -20,10 +23,26 @@
   with_items:
   - "{{ necc_files }}"
 
-- name: Create .my.cnf
-  file: path=/root/.my.cnf state=touch
+- name: Autogenerate password for mysql
+  shell: "date +%s | sha256sum | base64 | head -c 32 ; echo"
+  register: pass
+  no_log: true
 
-- name: Configure MariaDB
+- set_fact: 
+    server_passwd: "{{ pass.stdout }}"
+  no_log: true
+
+- name: Create .my.cnf
+  file: 
+    path: "{{ item }}" 
+    state: touch
+  with_items:
+  - '/root/.my.cnf'
+  ignore_errors: yes
+
+- service: name=mysqld state=started enabled=yes
+
+- name: Configure MySQL
   expect:
     command: "mysql_secure_installation"
     responses:
@@ -35,6 +54,11 @@
      (?i)remotely: "n"
      (?i)test: "y"
      (?i)tables: "y"
+  ignore_errors: yes
+
+- command: systemctl status firewalld
+  register: firewall
+  ignore_errors: yes
 
 - name: Open the services in Firewall
   firewalld:
@@ -43,6 +67,8 @@
     state: enabled
   with_items:
   - "{{ firewall_whitelist }}"
+  ignore_errors: yes
+  when: firewall is success
 
 - name: Open the ports in Firewall.
   firewalld:
@@ -51,6 +77,8 @@
     state: enabled
   with_items:
   - "{{ ports }}"
+  ignore_errors: yes
+  when: firewall is success
 
 - name: Creating the .my.cnf
   blockinfile:
@@ -60,3 +88,8 @@
        user=root 
        password="{{ server_passwd }}" 
        
+- name: Convert php72 to php 
+  file: 
+    src: /usr/bin/php72
+    dest: /usr/bin/php
+    state: link
